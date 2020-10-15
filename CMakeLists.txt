@@ -21,31 +21,43 @@ HunterGate(
 
 # TODO: rename project and delete this comment
 project(template)
-string(APPEND CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra")
-string(APPEND CMAKE_CXX_FLAGS " -Wno-unused-command-line-argument")
-string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
+#string(APPEND CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra")
+#string(APPEND CMAKE_CXX_FLAGS " -Wno-unused-command-line-argument")
+#string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
+
+project(app)
 
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
+hunter_add_package(cxxopts)
+find_package(cxxopts CONFIG REQUIRED)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed restbed)
 # TODO: change template word to project name and delete this comment
 add_library(template STATIC
   # enum your files and delete this comment
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/source.cpp
-)
+        include/matrix.h)
 add_executable(tests
   # TODO: enum your files and delete this comment
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
-)
+        tests/matrix_ut.cpp)
+add_executable(app
+        sources/main.cpp)
 
 # TODO: change template word to project name and delete this comment
 target_include_directories(template
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed/source
 )
 target_include_directories(tests
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-# TODO: change template word to project name and delete this comment
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+target_include_directories(app
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed/source
+        )
+
+target_link_libraries(app template restbed-static cxxopts::cxxopts)
 target_link_libraries(tests GTest::gmock_main template)
 
 enable_testing()
