@@ -40,20 +40,16 @@ find_package(cxxopts CONFIG REQUIRED)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed restbed)
 
-# TODO: change template word to project name and delete this comment
-#add_library(template STATIC
-#  # enum your files and delete this comment
-#        include/matrix.h)
+add_library(bw-core-lib STATIC
+        sources/details/cell.cpp sources/details/bug.cpp sources/details/world_map.cpp sources/details/world.cpp)
 add_executable(tests
-  # TODO: enum your files and delete this comment
         tests/matrix_ut.cpp)
 add_executable(app
-        sources/main.cpp)
+        sources/main.cpp sources/details/http_service.cpp)
 
-# TODO: change template word to project name and delete this comment
-#target_include_directories(template
-#  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-#)
+target_include_directories(bw-core-lib
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 target_include_directories(tests
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
@@ -62,8 +58,8 @@ target_include_directories(app
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed/source
         )
 
-target_link_libraries(app restbed-static cxxopts::cxxopts)
-target_link_libraries(tests GTest::gmock_main)
+target_link_libraries(app bw-core-lib restbed-static cxxopts::cxxopts)
+target_link_libraries(tests bw-core-lib GTest::gmock_main)
 
 enable_testing()
 add_test(NAME unit_tests COMMAND tests)
