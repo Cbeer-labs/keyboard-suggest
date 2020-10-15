@@ -19,11 +19,16 @@ HunterGate(
 )
 
 
-# TODO: rename project and delete this comment
-project(template)
-#string(APPEND CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra")
-#string(APPEND CMAKE_CXX_FLAGS " -Wno-unused-command-line-argument")
-#string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
+project(app-bugs-world)
+
+if(WIN32)
+else()
+  set(BUILD_SSL NO)
+  string(APPEND CMAKE_CXX_FLAGS " -pthread")
+  #string(APPEND CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra")
+  #string(APPEND CMAKE_CXX_FLAGS " -Wno-unused-command-line-argument")
+  #string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
+endif()
 
 project(app)
 
@@ -34,10 +39,11 @@ hunter_add_package(cxxopts)
 find_package(cxxopts CONFIG REQUIRED)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed restbed)
+
 # TODO: change template word to project name and delete this comment
-add_library(template STATIC
-  # enum your files and delete this comment
-        include/matrix.h)
+#add_library(template STATIC
+#  # enum your files and delete this comment
+#        include/matrix.h)
 add_executable(tests
   # TODO: enum your files and delete this comment
         tests/matrix_ut.cpp)
@@ -45,10 +51,9 @@ add_executable(app
         sources/main.cpp)
 
 # TODO: change template word to project name and delete this comment
-target_include_directories(template
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed/source
-)
+#target_include_directories(template
+#  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+#)
 target_include_directories(tests
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
@@ -57,8 +62,8 @@ target_include_directories(app
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed/source
         )
 
-target_link_libraries(app template restbed-static cxxopts::cxxopts)
-target_link_libraries(tests GTest::gmock_main template)
+target_link_libraries(app restbed-static cxxopts::cxxopts)
+target_link_libraries(tests GTest::gmock_main)
 
 enable_testing()
 add_test(NAME unit_tests COMMAND tests)
