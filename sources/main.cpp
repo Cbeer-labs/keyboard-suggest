@@ -58,9 +58,9 @@ int main(int argc, char* argv[]) {
   }
 
   World world(World::Params::DefaultWorldParams());
-  world.AddBugs<RandomBug>(5, 'r');
-  world.AddBugs<FoolBug>(5, 'z');
-  world.AddBugs<KnightBug>(5, 'a');
+  world.AddBugs<RandomBug>(5);
+  world.AddBugs<FoolBug>(5);
+  world.AddBugs<KnightBug>(5);
 
   Run(world, config);
 }

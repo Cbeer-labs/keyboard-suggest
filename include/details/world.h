@@ -1,6 +1,7 @@
 #ifndef APP_WORLD_H
 #define APP_WORLD_H
 
+#include <array>
 #include <memory>
 #include <random>
 #include <string>
@@ -34,9 +35,11 @@ class World {
   World(const Params& params);
 
   template <typename T>
-  void AddBugs(size_t num_bugs, char type) {
+  void AddBugs(size_t num_bugs) {
+    static const std::array<char, 3> bug_types = {'r', 'z', 'a'};
+
     ++num_kind_;
-    if (num_kind_ > 3) {
+    if (num_kind_ > bug_types.size()) {
       throw std::runtime_error("can't add new kind");
     }
 
@@ -50,7 +53,7 @@ class World {
           }
 
           auto bug = std::make_unique<T>();
-          bug->set_type(type);
+          bug->set_type(bug_types[num_kind_ - 1]);
           map[x][y] = std::move(bug);
           ++cnt;
         }
