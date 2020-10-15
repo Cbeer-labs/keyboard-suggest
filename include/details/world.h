@@ -10,17 +10,36 @@
 
 class World {
  public:
+  struct Params {
+    size_t width = 0;
+    size_t height = 0;
+    float food_prob = 0;
+    float poison_prob = 0;
+    float epoch_food_prob = 0;
+    float epoch_poison_prob = 0;
+
+    static Params SmallWorldParams() { return {20, 10, 0.2, 0.05, 5, 0}; }
+
+    static Params DefaultWorldParams() { return {30, 20, 0.2, 0.07, 3, 0.3}; }
+
+    static Params BigWorldParams() { return {50, 50, 0.2, 0.1, 5, 1}; }
+  };
+
   std::string Serialize() const;
 
   bool IsValid() const;
 
   void Step();
 
-  World(size_t x, size_t y, float init_food_prob, float init_poison_prob, float round_food_prob,
-        float round_poison_prob);
+  World(const Params& params);
 
   template <typename T>
   void AddBugs(size_t num_bugs, char type) {
+    ++num_kind_;
+    if (num_kind_ > 3) {
+      throw std::runtime_error("can't add new kind");
+    }
+
     auto& map = world_.map;
     size_t cnt = 0;
     for (size_t x = 0; x < map.size(); ++x) {
@@ -30,7 +49,7 @@ class World {
             continue;
           }
 
-          auto bug = std::make_shared<T>();
+          auto bug = std::make_unique<T>();
           bug->set_type(type);
           map[x][y] = std::move(bug);
           ++cnt;
@@ -40,9 +59,9 @@ class World {
   }
 
  private:
-  void OnDied(std::shared_ptr<Cell>& cell);
+  void OnDied(Cell::Ptr& cell);
 
-  void Move(std::shared_ptr<Cell>& active, std::shared_ptr<Cell>& passive);
+  void Move(Cell::Ptr& active, Cell::Ptr& passive);
 
   void Update();
 
@@ -62,6 +81,7 @@ class World {
   };
 
   RandomWrapper random_;
+  size_t num_kind_ = 0;
 };
 
 #endif  // APP_WORLD_H

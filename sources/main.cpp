@@ -1,14 +1,11 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
-#include <mutex>
 #include <string>
-#include <thread>
 
-#include <cxxopts.hpp>
-
+#include "cxxopts.hpp"
+#include "details/app.h"
 #include "details/bug.h"
-#include "details/http_service.h"
 #include "details/world.h"
 
 struct RandomBug : public Bug {
@@ -17,58 +14,53 @@ struct RandomBug : public Bug {
     return static_cast<ActionType>(i);
   }
 
-  std::shared_ptr<Cell> Clone() const override final {
-    return std::make_shared<RandomBug>(*this);
-  }
+  Cell::Ptr Clone() const override final { return std::make_unique<RandomBug>(*this); }
 };
 
+struct FoolBug : public Bug {
+  ActionType Action(const WorldMap& map) override { return ActionType::Bottom; }
+
+  Cell::Ptr Clone() const override final { return std::make_unique<FoolBug>(*this); }
+};
+
+struct KnightBug : public Bug {
+  ActionType Action(const WorldMap& map) override {
+    state_ = (state_ + 1) % 3;
+    if (state_ == 0) {
+      return ActionType::Left;
+    }
+    return ActionType::Top;
+  }
+
+  Cell::Ptr Clone() const override final { return std::make_unique<KnightBug>(*this); }
+
+ private:
+  size_t state_ = 0;
+};
 
 int main(int argc, char* argv[]) {
-  size_t port = 0;
-  std::string resources_path;
-  long long timeout = 0;
+  Config config;
 
   {
     cxxopts::Options options("bugs-world", "Cpp contest");
-    options.add_options()("t,timeout", "Sleep for between epochs",
-                          cxxopts::value<long long>()->default_value("300"))(
-        "r,resources", "Path to viewer's resources",
-        cxxopts::value<std::string>())("p,port", "Port number",
-                                       cxxopts::value<size_t>()->default_value(
-                                           "1984"))("h,help", "Print usage");
+    options.add_options()("t,timeout", "Sleep for between epochs", cxxopts::value<long long>()->default_value("300"))(
+        "r,resources", "Path to viewer's resources", cxxopts::value<std::string>())(
+        "p,port", "Port number", cxxopts::value<size_t>()->default_value("1984"))("h,help", "Print usage");
     auto result = options.parse(argc, argv);
 
-    timeout = result["timeout"].as<long long>();
-    resources_path = result["resources"].as<std::string>();
-    port = result["port"].as<size_t>();
+    config.timeout = result["timeout"].as<long long>();
+    config.resources_path = result["resources"].as<std::string>();
+    config.port = result["port"].as<size_t>();
 
-    std::cout << "Timeout: " << timeout << "ms" << std::endl;
-    std::cout << "Resources: '" << resources_path << "'" << std::endl;
-    std::cout << "Service port: " << port << std::endl;
+    std::cout << "Timeout: " << config.timeout << "ms" << std::endl;
+    std::cout << "Resources: '" << config.resources_path << "'" << std::endl;
+    std::cout << "Service port: " << config.port << std::endl;
   }
 
-  SceneHolder<std::string> state;
-  World world(50, 50, 0.2, 0.05, 0.000005, 0);
-  world.AddBugs<RandomBug>(30, 'r');
+  World world(World::Params::DefaultWorldParams());
+  world.AddBugs<RandomBug>(5, 'r');
+  world.AddBugs<FoolBug>(5, 'z');
+  world.AddBugs<KnightBug>(5, 'a');
 
-  std::thread service_runner(HttpServiceRun<std::string>, std::ref(state),
-                             port, resources_path);
-
-  bool is_alive = true;
-  using namespace std::chrono;
-  for (size_t i = 0; i < 1000 && is_alive; ++i) {
-    high_resolution_clock::time_point t1 = high_resolution_clock::now();
-    world.Step();
-    high_resolution_clock::time_point t2 = high_resolution_clock::now();
-    duration<double, std::milli> time_span = t2 - t1;
-
-    std::cout << "It took me " << time_span.count() << " milliseconds."
-              << std::endl;
-    state.Change(world.Serialize());
-    is_alive = world.IsValid();
-    std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
-    std::cout << i << "  ========" << std::endl;
-  }
-
-  service_runner.join();
+  Run(world, config);
 }

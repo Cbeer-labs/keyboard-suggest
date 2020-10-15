@@ -4,11 +4,15 @@ const color_map = {
     'p': 'red ',
     'f': 'green ',
     'r': 'blue ',
+    'z': 'yellow ',
+    'a': 'magenta ',
 };
 const color_coef_map = {
     'p': 1000,
     'f': 10,
     'r': 100,
+    'z': 100,
+    'a': 100,
 };
 function color(text) {
     const k = text[0];

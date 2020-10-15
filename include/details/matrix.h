@@ -36,8 +36,8 @@ class Matrix {
   Row operator[](size_t index) const { return Row{*this, index}; };
 
   Matrix(size_t x, size_t y) : cols_(y), rows_(x) {
-    data_ = std::vector<T>(cols_ * rows_, T{});
-    data_.resize(cols_ * rows_, T{});
+    data_ = std::vector<T>(cols_ * rows_);
+    data_.resize(cols_ * rows_);
   }
 
   Matrix(std::initializer_list<std::initializer_list<T>> ls) {
@@ -52,7 +52,11 @@ class Matrix {
       if (it.size() != cols_) {
         throw std::invalid_argument("wrong dimension");
       }
-      std::copy(it.begin(), it.end(), std::back_inserter(data_));
+
+      for (const T& j : it) {
+        data_.push_back(std::move(const_cast<T&>(j)));
+      }
+//      std::move(it.begin(), it.end(), std::back_inserter(data_));
     }
   }
 

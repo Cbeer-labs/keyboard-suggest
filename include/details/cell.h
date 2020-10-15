@@ -9,20 +9,20 @@ enum class ActionType { Left, Right, Top, Bottom, Stay };
 
 class Cell {
  public:
-  using Ptr = std::shared_ptr<Cell>;
+  using Ptr = std::unique_ptr<Cell>;
 
   static std::pair<int, int> ActionTypeToPair(ActionType action) {
     switch (action) {
       case ActionType::Stay:
         return std::make_pair(0, 0);
       case ActionType::Left:
-        return std::make_pair(-1, 0);
-      case ActionType::Right:
-        return std::make_pair(1, 0);
-      case ActionType::Bottom:
-        return std::make_pair(0, 1);
-      case ActionType::Top:
         return std::make_pair(0, -1);
+      case ActionType::Right:
+        return std::make_pair(0, 1);
+      case ActionType::Bottom:
+        return std::make_pair(1, 0);
+      case ActionType::Top:
+        return std::make_pair(-1, 0);
     }
   }
 
@@ -41,7 +41,7 @@ class Cell {
 
   bool IsDied() const { return points_ == 0; }
 
-  virtual std::shared_ptr<Cell> Clone() const = 0;
+  virtual Cell::Ptr Clone() const = 0;
 
   Cell(int points, int min_points, int max_points)
       : points_(points), min_points_(min_points), max_points_(max_points) {}
@@ -72,7 +72,7 @@ class EmptyCell : public Cell {
 
   char Type() const override final { return ' '; }
 
-  std::shared_ptr<Cell> Clone() const override final { return std::make_shared<EmptyCell>(*this); }
+  Cell::Ptr Clone() const override final { return std::make_unique<EmptyCell>(*this); }
 
   void OnEpochUpdate() override final {}
 };
@@ -85,7 +85,7 @@ class Poison : public Cell {
 
   char Type() const override final { return 'p'; }
 
-  std::shared_ptr<Cell> Clone() const override final { return std::make_shared<Poison>(*this); }
+  Cell::Ptr Clone() const override final { return std::make_unique<Poison>(*this); }
 
   void OnEpochUpdate() override final {}
 };
@@ -100,6 +100,6 @@ class Food : public Cell {
 
   void OnEpochUpdate() override final { Cell::OnEpochUpdate(); }
 
-  std::shared_ptr<Cell> Clone() const override final { return std::make_shared<Food>(*this); }
+  Cell::Ptr Clone() const override final { return std::make_unique<Food>(*this); }
 };
 #endif  // APP_CELL_H

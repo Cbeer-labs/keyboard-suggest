@@ -31,8 +31,7 @@ bool World::IsValid() const {
   for (size_t x = 0; x < world_map.size(); ++x) {
     for (size_t y = 0; y < world_map[x].size(); ++y) {
       char type = world_map[x][y]->Type();
-      if (type != Food{}.Type() && type != Poison{}.Type() &&
-          type != EmptyCell{}.Type()) {
+      if (type != Food{}.Type() && type != Poison{}.Type() && type != EmptyCell{}.Type()) {
         types.insert(type);
       }
     }
@@ -77,21 +76,15 @@ void World::Step() {
   ++epoch_;
 }
 
-World::World(size_t x, size_t y, float init_food_prob, float init_poison_prob,
-             float round_food_prob, float round_poison_prob)
-    : world_(x, y),
-      epoch_(0),
-      round_food_prob_(round_food_prob),
-      round_poison_prob_(round_poison_prob) {
-  Init(init_food_prob, init_poison_prob);
+World::World(const World::Params& params) : world_(params.height, params.width), epoch_(0) {
+  round_food_prob_ = params.epoch_food_prob / static_cast<float>(params.width * params.height);
+  round_poison_prob_ = params.epoch_poison_prob / static_cast<float>(params.width * params.height);
+  Init(params.food_prob, params.poison_prob);
 }
 
-void World::OnDied(std::shared_ptr<Cell>& cell) {
-  cell = std::make_shared<EmptyCell>();
-}
+void World::OnDied(Cell::Ptr& cell) { cell = EmptyCell{}.Clone(); }
 
-void World::Move(std::shared_ptr<Cell>& active,
-                 std::shared_ptr<Cell>& passive) {
+void World::Move(Cell::Ptr& active, Cell::Ptr& passive) {
   if (active == passive) {
     return;
   }
@@ -117,11 +110,11 @@ void World::Update() {
     for (size_t y = 0; y < map[x].size(); ++y) {
       if (random_() < round_food_prob_) {
         if (map[x][y]->Type() == EmptyCell{}.Type()) {
-          map[x][y] = std::make_shared<Food>();
+          map[x][y] = Food{}.Clone();
         }
       } else if (random_() < round_poison_prob_) {
         if (map[x][y]->Type() == EmptyCell{}.Type()) {
-          map[x][y] = std::make_shared<Poison>();
+          map[x][y] = Poison{}.Clone();
         }
       }
     }
@@ -135,13 +128,13 @@ void World::Init(float init_food_prob, float init_poison_prob) {
   for (size_t x = 0; x < map.size(); ++x) {
     for (size_t y = 0; y < map[x].size(); ++y) {
       if (world_.IsBound(x, y)) {
-        map[x][y] = std::make_shared<Poison>();
+        map[x][y] = Poison{}.Clone();
       } else if (random_() < init_food_prob) {
-        map[x][y] = std::make_shared<Food>();
+        map[x][y] = Food{}.Clone();
       } else if (random_() < init_poison_prob) {
-        map[x][y] = std::make_shared<Poison>();
+        map[x][y] = Poison{}.Clone();
       } else {
-        map[x][y] = std::make_shared<EmptyCell>();
+        map[x][y] = EmptyCell{}.Clone();
       }
     }
   }

@@ -45,7 +45,7 @@ add_library(bw-core-lib STATIC
 add_executable(tests
         tests/matrix_ut.cpp)
 add_executable(app
-        sources/main.cpp sources/details/http_service.cpp)
+        sources/main.cpp sources/details/http_service.cpp sources/details/app.cpp)
 
 target_include_directories(bw-core-lib
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
