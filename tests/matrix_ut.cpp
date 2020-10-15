@@ -1,6 +1,6 @@
-#include "matrix.h"
-
 #include <gtest/gtest.h>
+
+#include "details/matrix.h"
 
 TEST(Matrix, Sample) {
     Matrix<int> m(1, 300);

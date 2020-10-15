@@ -12,7 +12,7 @@
 #include "details/world.h"
 
 struct RandomBug : public Bug {
-  ActionType Action(const Map& map) override {
+  ActionType Action(const WorldMap& map) override {
     int i = rand() % 5;
     return static_cast<ActionType>(i);
   }

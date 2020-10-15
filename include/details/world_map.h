@@ -1,39 +1,24 @@
-//
-// Created by drewxa on 15.10.2020.
-//
-
 #ifndef APP_WORLD_MAP_H
 #define APP_WORLD_MAP_H
 
 #include <memory>
 
-#include "matrix.h"
 #include "details/cell.h"
+#include "matrix.h"
 
-class Map {
-public:
-    Map() : map(0, 0) {}
+class WorldMap {
+ public:
+  WorldMap();
 
-    Map(size_t x, size_t y) : map(x, y) {
-    }
+  WorldMap(size_t x, size_t y);
 
-    Map ViewRegion(size_t x, size_t y) const {
-        Map view;
-        view.map = Matrix<std::shared_ptr<Cell>>{
-                {map[x - 1][y - 1]->Clone(), map[x][y - 1]->Clone(), map[x + 1][y - 1]->Clone()},
-                {map[x - 1][y - 0]->Clone(), map[x][y - 0]->Clone(), map[x + 1][y - 0]->Clone()},
-                {map[x - 1][y + 1]->Clone(), map[x][y + 1]->Clone(), map[x + 1][y + 1]->Clone()},
-        };
-        return view;
-    }
+  WorldMap ViewRegion(size_t x, size_t y) const;
 
-    bool IsBound(size_t x, size_t y) const {
-        return x == 0 || y == 0 || (x + 1) == map.size() || (y + 1) == map[x].size();
-    }
+  bool IsBound(size_t x, size_t y) const;
 
-    Matrix<std::shared_ptr<Cell>> map;
+  friend class World;
+ private:
+  Matrix<std::shared_ptr<Cell>> map;
 };
-
-
 
 #endif  // APP_WORLD_MAP_H
