@@ -21,11 +21,11 @@ void Run(World& world, const Config& config) {
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> time_span = t2 - t1;
 
-    std::cout << "It took me " << time_span.count() << " milliseconds." << std::endl;
+//    std::cout << "It took me " << time_span.count() << " milliseconds." << std::endl;
     state.Change(world.Serialize());
     is_alive = world.IsValid();
     std::this_thread::sleep_for(std::chrono::milliseconds(config.timeout));
-    std::cout << i << "  ========" << std::endl;
+    std::cout << "Epoch: " << i << std::endl;
   }
 
   service_runner.join();

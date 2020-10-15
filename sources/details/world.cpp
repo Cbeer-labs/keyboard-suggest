@@ -65,7 +65,7 @@ void World::Step() {
       WorldMap view = world_.ViewRegion(x, y);
 
       // TODO: wait for
-      auto action = Cell::ActionTypeToPair(current_cell->Action(view));
+      auto action = Cell::ActionTypeToPair(current_cell->Action(std::move(view)));
       auto& move_to = world_map[x + action.first][y + action.second];
 
       Move(current_cell, move_to);
