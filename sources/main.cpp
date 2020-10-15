@@ -1,7 +1,6 @@
-#include <chrono>
 #include <iostream>
 #include <memory>
-#include <string>
+//#include <string>
 
 #include "cxxopts.hpp"
 #include "details/app.h"
@@ -58,9 +57,9 @@ int main(int argc, char* argv[]) {
   }
 
   World world(World::Params::DefaultWorldParams());
-  world.AddBugs<RandomBug>(5);
-  world.AddBugs<FoolBug>(5);
-  world.AddBugs<KnightBug>(5);
+  world.AddBugs<RandomBug>(7);
+  world.AddBugs<RandomBug>(7);
+  world.AddBugs<RandomBug>(7);
 
   Run(world, config);
 }
