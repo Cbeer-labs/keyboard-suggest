@@ -4,7 +4,7 @@
 
 Для начала склонируйте репозиторий со всеми зависимостями. Для этого выполните в командной строке
 ```shell script
-git clone https://repo bugs-world-contest
+git clone https://github.com/drewxa/bugs-world.git bugs-world-contest
 cd bugs-world-contest
 git submodule update --init --recursive
 ```
