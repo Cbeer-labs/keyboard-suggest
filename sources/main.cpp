@@ -4,38 +4,6 @@
 
 #include "cxxopts.hpp"
 #include "details/app.h"
-#include "details/bug.h"
-#include "details/world.h"
-
-struct RandomBug : public Bug {
-  ActionType Action(const WorldMap& map) override {
-    int i = rand() % 5;
-    return static_cast<ActionType>(i);
-  }
-
-  Cell::Ptr Clone() const override final { return std::make_unique<RandomBug>(*this); }
-};
-
-struct FoolBug : public Bug {
-  ActionType Action(const WorldMap& map) override { return ActionType::Bottom; }
-
-  Cell::Ptr Clone() const override final { return std::make_unique<FoolBug>(*this); }
-};
-
-struct KnightBug : public Bug {
-  ActionType Action(const WorldMap& map) override {
-    state_ = (state_ + 1) % 3;
-    if (state_ == 0) {
-      return ActionType::Left;
-    }
-    return ActionType::Top;
-  }
-
-  Cell::Ptr Clone() const override final { return std::make_unique<KnightBug>(*this); }
-
- private:
-  size_t state_ = 0;
-};
 
 int main(int argc, char* argv[]) {
   Config config;
@@ -56,10 +24,5 @@ int main(int argc, char* argv[]) {
     std::cout << "Service port: " << config.port << std::endl;
   }
 
-  World world(World::Params::DefaultWorldParams());
-  world.AddBugs<RandomBug>(7);
-  world.AddBugs<RandomBug>(7);
-  world.AddBugs<RandomBug>(7);
-
-  Run(world, config);
+  Run(config);
 }

@@ -3,7 +3,7 @@
 
 #include <string>
 
-class World;
+#include "messages.h"
 
 struct Config {
   size_t port = 0;
@@ -11,6 +11,8 @@ struct Config {
   long long timeout = 0;
 };
 
-void Run(World&, const Config&);
+void Run(const Config&);
+
+std::string Serialize(const Answer&);
 
 #endif  // APP_APP_H

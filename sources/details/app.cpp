@@ -6,27 +6,18 @@
 #include <thread>
 
 #include "details/http_service.h"
-#include "details/world.h"
 
-void Run(World& world, const Config& config) {
+#include "messages.h"
 
-  SceneHolder<std::string> state;
+void Run(const Config &config) {
+  InternalState internal_state;
+  InitState(config, internal_state);
 
-  std::thread service_runner(HttpServiceRun<std::string>, std::ref(state), config.port, config.resources_path);
+  Storage storage;
+  InitStorage(config, storage);
 
-  bool is_alive = true;
-  for (size_t i = 0; i < 1000 && is_alive; ++i) {
-    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-    world.Step();
-    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> time_span = t2 - t1;
+  HttpService service(std::move(internal_state), std::move(storage), config.resources_path);
 
-//    std::cout << "It took me " << time_span.count() << " milliseconds." << std::endl;
-    state.Change(world.Serialize());
-    is_alive = world.IsValid();
-    std::this_thread::sleep_for(std::chrono::milliseconds(config.timeout));
-    std::cout << "Epoch: " << i << std::endl;
-  }
-
+  std::thread service_runner(&HttpService::Run, &service, config.port);
   service_runner.join();
 }
