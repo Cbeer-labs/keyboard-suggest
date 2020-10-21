@@ -49,7 +49,7 @@ class SceneHolder {
 
   std::string data() const {
     std::vector<std::string> top_suggestions;
-    for (size_t i = 0; i < std::min(answer_.suggestions.size(), 10u); ++i) {
+    for (size_t i = 0; i < std::min<size_t>(answer_.suggestions.size(), 10u); ++i) {
       top_suggestions.push_back(answer_.suggestions[i]);
     }
     nlohmann::json js(top_suggestions);

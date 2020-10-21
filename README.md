@@ -23,7 +23,7 @@ git submodule update --init --recursive
 ### Тестовый запуск
 Скомпилируйте тестовый проект:
 ```shell script
-cmake -B _builds . -DBUILD_SSL=NO
+cmake -B _builds -H . -DBUILD_SSL=NO
 cmake --build _builds --target app
 ```
 
