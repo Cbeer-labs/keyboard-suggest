@@ -14,10 +14,9 @@ set(
 include("tools/gate/cmake/HunterGate.cmake")
 
 HunterGate(
-  URL "https://github.com/cpp-pm/hunter/archive/v0.23.271.tar.gz"
-  SHA1 "2d6686024529b471e0cc3a4fc07d4d64b62a53ee"
+  URL "https://github.com/cpp-pm/hunter/archive/v0.23.314.tar.gz"
+  SHA1 "95c47c92f68edb091b5d6d18924baabe02a6962a"
 )
-
 
 project(app-bugs-world)
 
