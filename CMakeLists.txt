@@ -60,8 +60,13 @@ target_include_directories(app
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third-party/restbed/source
         )
 
+
 target_link_libraries(app bw-core-lib restbed-static cxxopts::cxxopts nlohmann_json::nlohmann_json)
 target_link_libraries(tests bw-core-lib GTest::gmock_main )
+
+add_executable(sandbox
+  ${CMAKE_CURRENT_SOURCE_DIR}/sandbox/main.cpp
+)
 
 enable_testing()
 add_test(NAME unit_tests COMMAND tests)
