@@ -20,43 +20,25 @@ jobs:
   
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: prepare environment
-        run:  sudo apt install git &&
-              git submodule update --init --recursive
-      - name: checks
-        run: 
-          docker run -v `pwd`:`pwd` -w `pwd` --cap-add=SYS_PTRACE -t rusdevops/bootstrap:cpp scripts/checks.sh
-          
-          
-  tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-  
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: prepare environment
-        run:  sudo apt install git &&
-              git submodule update --init --recursive
-      - name: tests
-        run: 
-          docker run -v `pwd`:`pwd` -w `pwd` -t rusdevops/bootstrap-cpp:latest scripts/tests.sh
-
-
-  quality:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: prepare environment
-        run:  sudo apt install git &&
-              git submodule update --init --recursive
-      - name: quality
-        run: 
-          ./scripts/genenv.sh &&
-          docker run --env-file .env -v `pwd`:`pwd` -w `pwd` -t rusdevops/bootstrap-cpp:latest scripts/coverage.sh
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      - name: setup environment
+        run:
+          sudo ./scripts/setup-all.sh
+      - name: Codestyle
+        run:
+          scripts/codestyle.sh
+      - name: AddressSanitizer
+        run:
+          scripts/asan.sh
+      - name: ThreadSanitizer
+        run:
+          scripts/tsan.sh
+      - name: Coverage
+        run:
+          env SAVE_CACHE=1 scripts/coverage.sh
+      - name: SonarQube
+        run:
+          scripts/sonarqube.sh
+        continue-on-error: true
