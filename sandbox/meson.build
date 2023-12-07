@@ -1,7 +1,7 @@
 file_list = files(
   'main.cpp',
 )
-deps = [dependency('lab')]
+deps = []
 inc_dirs = [
   '../include',
 ]

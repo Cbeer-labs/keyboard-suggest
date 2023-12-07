@@ -1,5 +1,5 @@
-#ifndef KEYBOARD_SUGGEST_STATE_H
-#define KEYBOARD_SUGGEST_STATE_H
+#ifndef STATE_H
+#define STATE_H
 
 struct InternalState {
   // here your code
@@ -9,4 +9,4 @@ struct Storage {
   // here your code
 };
 
-#endif  // KEYBOARD_SUGGEST_STATE_H
+#endif  // STATE_H

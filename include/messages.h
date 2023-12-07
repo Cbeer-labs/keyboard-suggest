@@ -1,12 +1,16 @@
 #ifndef KEYBOARD_SUGGEST_MESSAGES_H
 #define KEYBOARD_SUGGEST_MESSAGES_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
 #include "state.h"
 
-struct Config;
+struct Config {
+  std::string addr;
+  uint16_t port;
+};
 
 struct Answer {
   std::vector<std::string> suggestions;
