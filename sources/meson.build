@@ -1,7 +1,7 @@
 file_list = files(
   'messages.cpp',
 )
-deps = []
+deps = [dependency('boost')]
 inc_dirs = [
   '../include',
 ]
