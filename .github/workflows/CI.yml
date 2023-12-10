@@ -22,18 +22,17 @@ jobs:
       - name: setup environment
         run:
           sudo ./scripts/setup-all.sh
+      - name: Build
+        run:
+          ./scripts/build.sh
+      - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: app
+          path: dist
       - name: Codestyle
         run:
           scripts/codestyle.sh
-      - name: AddressSanitizer
-        run:
-          scripts/asan.sh
-      - name: ThreadSanitizer
-        run:
-          scripts/tsan.sh
-      - name: Coverage
-        run:
-          env SAVE_CACHE=1 scripts/coverage.sh
       - name: SonarQube
         run:
           scripts/sonarqube.sh

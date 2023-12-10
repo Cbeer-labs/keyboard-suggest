@@ -1,7 +1,9 @@
 #include "server/httpd.h"
+#include "server/config.h"
 #include <mutex>
 #include <sstream>
 #include <stdexcept>
+#define CROW_STATIC_DIRECTORY PREFIX "/static/"
 #include "crow_all.h"
 #include "messages.h"
 #include "state.h"

@@ -5,6 +5,9 @@ project('lab-xx-template', 'cpp',
   ],
 )
 
+subdir('include' / 'server')
 subdir('sources')
 subdir('tests')
 subdir('sandbox')
+
+install_subdir('static', install_dir: 'share/keyboard_suggest')
